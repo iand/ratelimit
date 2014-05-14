@@ -7,7 +7,7 @@ Docs: http://godoc.org/github.com/iand/ratelimit
 
 Example use:
 
-```
+```go
 import "github.com/iand/ratelimit"
 
 limiter := ratelimit.PerSecond(5, 100)
@@ -16,5 +16,7 @@ limiter := ratelimit.PerSecond(5, 100)
 for i := 0; i < 100; i++ {
 	limiter.Do(func() { println("hello") })
 }
+
+// Blocks until the rate limiter has finished
 limiter.Drain()
 ```
