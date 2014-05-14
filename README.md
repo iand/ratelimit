@@ -12,7 +12,7 @@ import "github.com/iand/ratelimit"
 
 limiter := ratelimit.PerSecond(5, 100)
 
-// Following should be executed at a rate of 5 per seconf
+// Following should be executed at a rate of 5 per second
 for i := 0; i < 100; i++ {
 	limiter.Do(func() { println("hello") })
 }
