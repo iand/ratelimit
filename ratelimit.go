@@ -22,6 +22,9 @@ func (rl *RateLimiter) Stop() {
 // Drain runs remaining work to completion and then stops the rate limiter
 func (rl *RateLimiter) Drain() {
 	rl.draining = true
+
+	// block until we have drained
+	<-rl.quit
 }
 
 // Do attempts to queue work for the rate limiter, returns false if it could not be queued
