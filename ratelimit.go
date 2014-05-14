@@ -28,6 +28,8 @@ func (rl *RateLimiter) Drain() {
 }
 
 // Do attempts to queue work for the rate limiter, returns false if it could not be queued
+// Each function queued will be executed in a separate goroutine so if the functions are long running, this
+// could result in a large number of active goroutines, depending on the rate of the limiter
 func (rl *RateLimiter) Do(fn Func) bool {
 	if rl.draining {
 		return false
@@ -49,7 +51,7 @@ func (rl *RateLimiter) run() {
 		case <-rl.ticker.C:
 			select {
 			case fn := <-rl.work:
-				fn()
+				go fn()
 			default:
 				// No work to do
 				if rl.draining {
@@ -63,7 +65,7 @@ func (rl *RateLimiter) run() {
 
 // PerSecond creates a ratelimiter that executes a maximum number of operations per second
 func PerSecond(rate float64, capacity int) *RateLimiter {
-	interval := time.Duration(float64(time.Second) * 1.0 / rate)
+	interval := time.Duration(float64(time.Second) / rate)
 	rl := &RateLimiter{
 		ticker: time.NewTicker(interval),
 		quit:   make(chan struct{}),
