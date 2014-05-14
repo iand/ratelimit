@@ -10,13 +10,15 @@ Example use:
 ```go
 import "github.com/iand/ratelimit"
 
-limiter := ratelimit.PerSecond(5, 100)
+func main() {
+	limiter := ratelimit.PerSecond(5, 100)
 
-// Following should be executed at a rate of 5 per second
-for i := 0; i < 100; i++ {
-	limiter.Do(func() { println("hello") })
+	// Following should be executed at a rate of 5 per second
+	for i := 0; i < 100; i++ {
+		limiter.Do(func() { println("hello") })
+	}
+
+	// Blocks until the rate limiter has finished
+	limiter.Drain()
 }
-
-// Blocks until the rate limiter has finished
-limiter.Drain()
 ```
