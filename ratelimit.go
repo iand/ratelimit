@@ -1,4 +1,4 @@
-// ratelimit implements rate limiting of functions using a leacky bucket algorithm
+// ratelimit implements rate limiting of functions using a leaky bucket algorithm
 package ratelimit
 
 import (

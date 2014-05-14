@@ -1,7 +1,7 @@
 ratelimit
 =========
 
-Go package for rate limiting of functions using a leacky bucket algorithm
+Go package for rate limiting of functions using a leaky bucket algorithm
 
 Docs: http://godoc.org/github.com/iand/ratelimit
 
@@ -16,4 +16,5 @@ limiter := ratelimit.PerSecond(5, 100)
 for i := 0; i < 100; i++ {
 	limiter.Do(func() { println("hello") })
 }
+limiter.Drain()
 ```
