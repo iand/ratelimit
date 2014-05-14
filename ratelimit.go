@@ -27,7 +27,7 @@ func (rl *RateLimiter) Drain() {
 	<-rl.quit
 }
 
-// Do attempts to queue work for the rate limiter, returns false if it could not be queued
+// Do attempts to queue work for the rate limiter, returns false if it could not be queued.
 // Each function queued will be executed in a separate goroutine so if the functions are long running, this
 // could result in a large number of active goroutines, depending on the rate of the limiter
 func (rl *RateLimiter) Do(fn Func) bool {
