@@ -1,6 +1,7 @@
 package ratelimit
 
 import (
+	"context"
 	"testing"
 	"time"
 )
@@ -15,7 +16,7 @@ func TestPerSecond(t *testing.T) {
 
 	start := time.Now()
 	for i := 0; i < sampleSize; i++ {
-		limiter.Do(func() {
+		limiter.Do(context.Background(), func() {
 			done <- struct{}{}
 		})
 	}

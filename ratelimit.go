@@ -2,6 +2,8 @@
 package ratelimit
 
 import (
+	"context"
+	"sync/atomic"
 	"time"
 )
 
@@ -11,7 +13,7 @@ type RateLimiter struct {
 	ticker   *time.Ticker
 	work     chan Func
 	quit     chan struct{}
-	draining bool
+	draining uint64
 }
 
 // Stop turns off the rate limiter immediately, losing any queued work
@@ -21,7 +23,7 @@ func (rl *RateLimiter) Stop() {
 
 // Drain runs remaining work to completion and then stops the rate limiter
 func (rl *RateLimiter) Drain() {
-	rl.draining = true
+	atomic.StoreUint64(&rl.draining, 1)
 
 	// block until we have drained
 	<-rl.quit
@@ -30,8 +32,17 @@ func (rl *RateLimiter) Drain() {
 // Do attempts to queue work for the rate limiter, returns false if it could not be queued.
 // Each function queued will be executed in a separate goroutine so if the functions are long running, this
 // could result in a large number of active goroutines, depending on the rate of the limiter
-func (rl *RateLimiter) Do(fn Func) bool {
-	if rl.draining {
+func (rl *RateLimiter) Do(ctx context.Context, fn Func) bool {
+	if ctx != nil {
+		// Check whether context has been cancelled
+		select {
+		case <-ctx.Done():
+			return false
+		default:
+		}
+	}
+
+	if draining := atomic.LoadUint64(&rl.draining); draining == 1 {
 		return false
 	}
 	select {
@@ -54,7 +65,7 @@ func (rl *RateLimiter) run() {
 				go fn()
 			default:
 				// No work to do
-				if rl.draining {
+				if draining := atomic.LoadUint64(&rl.draining); draining == 1 {
 					close(rl.quit)
 				}
 			}
