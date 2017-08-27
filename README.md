@@ -3,7 +3,17 @@ ratelimit
 
 Go package for rate limiting of functions using a leaky bucket algorithm
 
-Docs: http://godoc.org/github.com/iand/ratelimit
+[![Build Status](https://travis-ci.org/iand/pgen.svg?branch=master)](https://travis-ci.org/iand/pgen)
+
+## Installation
+
+Simply run
+
+    go get -u github.com/iand/ratelimit
+
+Documentation is at [http://godoc.org/github.com/iand/ratelimit](http://godoc.org/github.com/iand/ratelimit)
+
+## Usage
 
 Example use:
 
@@ -22,3 +32,8 @@ func main() {
 	limiter.Drain()
 }
 ```
+
+LICENSE
+=======
+This is free and unencumbered software released into the public domain. For more
+information, see <http://unlicense.org/> or the accompanying [`UNLICENSE`](UNLICENSE) file.
